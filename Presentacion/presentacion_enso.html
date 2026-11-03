@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ENOS y lluvias extremas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Display:wdth,wght@62.5..100,100..900&family=Poppins:ital,wght@0,400;0,500;0,600;0,700;1,500&display=swap" rel="stylesheet">
+<style>
+:root{--fondo:#EFEEEA;--sup:#FFFFFF;--linea:#1A1A1A;--texto:#1A1A1A;--titulo:#171C2E;--tenue:#57544E;--borde:rgba(26,26,26,.16);
+--naranja:#FF7A3D;--resaltador:rgba(255,122,61,.45);--salvia:#A9CDB1;--verde:#2F7D5B;--gris:#D6D2C8;--gris-osc:#A29E94;
+--nino:#FF7A3D;--neu:#A29E94;--nina:#2F7D5B;
+--serif:'Noto Serif Display',Georgia,serif;--sans:'Poppins',system-ui,-apple-system,'Segoe UI',sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--sans);color:var(--texto);background-color:var(--fondo);
+background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.35 0 0 0 0 0.33 0 0 0 0 0.3 0 0 0 0.09 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+.puntitos{position:fixed;inset:0;pointer-events:none;z-index:0}
+.puntitos i{position:absolute;border-radius:50%;display:block;animation:flotar 20s ease-in-out infinite alternate}
+@keyframes flotar{0%{transform:translate(0,0)}50%{transform:translate(var(--dx),calc(var(--dy)*-.5))}100%{transform:translate(calc(var(--dx)*-.6),var(--dy))}}
+.escenario{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:1}
+.slide{position:absolute;width:1280px;height:720px;padding:56px 96px 92px;display:flex;flex-direction:column;justify-content:center;gap:18px;
+opacity:0;visibility:hidden;transition:opacity .45s ease,visibility .45s;transform-origin:center center}
+.slide.activa{opacity:1;visibility:visible}
+.slide.activa>*{animation:subir .6s ease both}
+.slide.activa>*:nth-child(2){animation-delay:.08s}.slide.activa>*:nth-child(3){animation-delay:.16s}.slide.activa>*:nth-child(4){animation-delay:.24s}.slide.activa>*:nth-child(5){animation-delay:.32s}
+@keyframes subir{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+h1,h2{font-family:var(--serif);font-stretch:68%;font-weight:800;color:var(--titulo);letter-spacing:-.01em;line-height:1.02}
+h1{font-size:78px}
+h2{font-size:52px}
+.hl{background:linear-gradient(transparent 58%,var(--resaltador) 58%,var(--resaltador) 92%,transparent 92%);padding:0 .06em}
+p{color:var(--tenue);font-size:19px;line-height:1.55}
+p.grande{font-size:24px;color:var(--texto)}
+strong,b{color:var(--texto);font-weight:600}
+.marcado{background:var(--resaltador);padding:0 .15em;border-radius:3px;color:var(--texto)}
+.etiqueta{display:inline-block;align-self:flex-start;background:var(--naranja);color:var(--texto);font-weight:700;font-size:13px;letter-spacing:.06em;text-transform:uppercase;padding:.38em 1.05em;border-radius:999px}
+.etiqueta.salvia{background:var(--salvia)}
+.fila{display:grid;gap:22px;align-items:center}
+.dos{grid-template-columns:1fr 1fr}.dos-uno{grid-template-columns:1.55fr 1fr}.cuatro{grid-template-columns:repeat(4,1fr);align-items:stretch}
+.tarjeta{background:var(--sup);border:1.5px solid var(--linea);border-radius:16px;padding:16px 20px}
+.tarjeta.naranja{border-top:7px solid var(--naranja)}.tarjeta.verde{border-top:7px solid var(--verde)}.tarjeta.gris{border-top:7px solid var(--gris-osc)}.tarjeta.salvia{border-top:7px solid var(--salvia)}
+.tarjeta h3{font-size:19px;margin-bottom:4px}
+.tarjeta p{font-size:15.5px}
+.cifra b{display:block;font-family:var(--serif);font-stretch:75%;font-weight:800;color:var(--titulo);font-size:62px;line-height:1;margin:2px 0 6px}
+.cifra b small{font-size:26px;font-family:var(--sans);font-weight:600;color:var(--tenue)}
+.cifra b.chica{font-size:44px}
+.rotulo{font-size:12.5px;font-weight:600;color:var(--tenue);text-transform:uppercase;letter-spacing:.05em}
+.lista{list-style:none;display:grid;gap:10px}
+.lista li{font-size:18.5px;line-height:1.5;color:var(--tenue);padding-left:28px;position:relative}
+.lista li::before{content:"";position:absolute;left:4px;top:.55em;width:11px;height:11px;border-radius:50%;background:var(--naranja);border:1.5px solid var(--linea)}
+.caja-graf{background:var(--sup);border:1.5px solid var(--linea);border-radius:16px;padding:14px 16px}
+.caja-graf svg{width:100%;height:auto;display:block}
+svg{font-family:var(--sans);fill:var(--tenue);font-size:13px}
+.leyenda{display:flex;gap:16px;flex-wrap:wrap;font-size:13.5px;color:var(--tenue);margin-bottom:6px}
+.leyenda span::before{content:"";display:inline-block;width:12px;height:12px;border-radius:3px;border:1.2px solid var(--linea);margin-right:6px;vertical-align:-1px;background:var(--c)}
+.nota{font-size:13.5px;color:var(--tenue);font-style:italic}
+.linea-tiempo{position:relative;display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-top:10px}
+.linea-tiempo::before{content:"";position:absolute;left:18px;right:60px;top:17px;height:1.5px;background:var(--linea)}
+.paso .num{position:relative;display:inline-grid;place-items:center;width:36px;height:36px;border-radius:50%;background:var(--naranja);border:1.5px solid var(--linea);font-family:var(--serif);font-weight:800;font-size:17px;color:var(--titulo);margin-bottom:10px}
+.paso h3{font-size:16px}.paso p{font-size:14px;line-height:1.4}
+.portada{padding-right:560px}
+.integrantes{margin-top:6px}.integrantes ul{list-style:none;display:flex;flex-wrap:wrap;gap:8px 10px;margin-top:8px;max-width:560px}
+.integrantes li{font-size:14.5px;font-weight:600;color:var(--texto);background:var(--sup);border:1.5px solid var(--linea);border-radius:999px;padding:.3em .95em}
+.fases{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border:1.5px solid var(--linea);border-radius:14px;overflow:hidden}
+.fases div{padding:16px 10px;text-align:center;font-weight:700;font-size:19px;color:#fff}
+.fases div+div{border-left:1.5px solid var(--linea)}
+.barra{position:fixed;top:0;left:0;height:4px;background:var(--naranja);z-index:10;transition:width .4s}
+.pie{position:fixed;bottom:0;left:0;right:0;z-index:10;display:flex;align-items:center;justify-content:space-between;padding:0 96px 18px;font-size:13px;color:#8a867d;pointer-events:none}
+.pie .controles{display:flex;gap:8px;align-items:center;pointer-events:auto}
+.pie button{width:38px;height:38px;border-radius:50%;cursor:pointer;background:transparent;border:1.5px solid var(--linea);font-size:16px;color:var(--texto)}
+.pie button:hover{background:var(--naranja)}
+.contador{min-width:56px;text-align:center;color:var(--tenue)}
+.preguntas{font-family:var(--serif);font-stretch:68%;font-weight:800;color:var(--titulo);font-size:100px;line-height:1}
+@media print{html,body{overflow:visible}.escenario{position:static;display:block}.slide{position:relative;opacity:1;visibility:visible;transform:none!important;page-break-after:always}.slide>*{animation:none!important}.pie,.barra,.puntitos{display:none}@page{size:1280px 720px;margin:0}}
+</style>
+</head>
+<body>
+<div class="puntitos" id="puntitos"></div>
+<div class="barra" id="barra"></div>
+<div class="escenario">
+
+<!-- 1 -->
+<section class="slide portada" data-seccion="Portada">
+  <span class="etiqueta">Laboratorio de Métodos Cuantitativos · FCE-UBA · 2C 2026</span>
+  <h1>¿El Niño trae <span class="hl">lluvias extremas</span> al Litoral?</h1>
+  <p class="grande">Fases del ENOS (índice RONI) y meses con precipitación excepcional en 20 estaciones, 1991–2025.</p>
+  <div class="integrantes"><span class="rotulo">Integrantes</span><ul><li>Abril Palavecino</li><li>Alejandro Puglisi</li><li>Florencia Larrinaga</li><li>Jorge Delgado</li><li>Marco Rojas</li></ul></div>
+  <svg id="g-portada" viewBox="0 0 420 445" style="position:absolute;right:96px;top:130px;width:420px;height:445px"></svg>
+</section>
+
+<!-- 2 -->
+<section class="slide" data-seccion="El recorrido">
+  <span class="etiqueta">El recorrido</span>
+  <h2>Cinco pasos para <span class="hl">mirar 35 años de lluvia</span></h2>
+  <div class="linea-tiempo">
+    <div class="paso"><span class="num">1</span><h3>El ENOS</h3><p>Qué es y cómo se mide con el RONI.</p></div>
+    <div class="paso"><span class="num">2</span><h3>Los datos</h3><p>20 estaciones del SMN y el umbral P90.</p></div>
+    <div class="paso"><span class="num">3</span><h3>Frecuencia y simultaneidad</h3><p>¿Hay más extremos con El Niño? ¿A la vez?</p></div>
+    <div class="paso"><span class="num">4</span><h3>Robustez</h3><p>Intensidad, estaciones del año y quinquenios.</p></div>
+    <div class="paso"><span class="num">5</span><h3>¿Sirve para anticipar?</h3><p>La pregunta aplicada.</p></div>
+  </div>
+  <p class="nota" style="margin-top:14px">Todo el análisis está en el Colab del grupo, con los prompts de IA usados.</p>
+</section>
+
+<!-- 3 -->
+<section class="slide" data-seccion="1 · El ENOS">
+  <span class="etiqueta salvia">1 · El ENOS</span>
+  <h2>Un <span class="hl">termostato</span> en el Pacífico que cambia nuestras lluvias</h2>
+  <div class="fila dos-uno" style="align-items:start">
+    <ul class="lista">
+      <li>Cada pocos años el Pacífico ecuatorial se calienta o se enfría más de lo normal. Ese ciclo se llama <b>ENOS</b> (El Niño – Oscilación del Sur).</li>
+      <li>Lo medimos con el <b>RONI</b> (índice oceánico de El Niño relativo) de la <b>NOAA</b>, la agencia oceánica y atmosférica de EE. UU.: cuántos grados más cálido o más frío está el océano respecto del resto del trópico.</li>
+      <li>Con ese número, cada uno de los 420 meses queda en una de tres fases.</li>
+    </ul>
+    <div>
+      <div class="fases"><div style="background:var(--nina)">La Niña</div><div style="background:var(--neu)">Neutral</div><div style="background:var(--nino);color:var(--texto)">El Niño</div></div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);text-align:center;margin-top:8px;font-size:14px;color:var(--tenue)">
+        <span>RONI ≤ −0,5 °C<br><b>149 meses</b></span><span>entre −0,5 y +0,5<br><b>168 meses</b></span><span>RONI ≥ +0,5 °C<br><b>103 meses</b></span>
+      </div>
+    </div>
+  </div>
+  <p>La literatura asocia El Niño con más lluvia en el noreste argentino. Nosotros miramos los <span class="marcado">extremos</span>.</p>
+</section>
+
+<!-- 4 -->
+<section class="slide" data-seccion="2 · Los datos">
+  <span class="etiqueta salvia">2 · Los datos</span>
+  <h2>Contamos los meses con <span class="hl">lluvia excepcional</span></h2>
+  <div class="fila cuatro">
+    <div class="tarjeta naranja cifra"><span class="rotulo">Estaciones del SMN</span><b>20</b><p>en Formosa, Chaco, Misiones, Corrientes, Entre Ríos y Santa Fe</p></div>
+    <div class="tarjeta salvia cifra"><span class="rotulo">Meses</span><b>420</b><p>de enero de 1991 a diciembre de 2025</p></div>
+    <div class="tarjeta gris cifra"><span class="rotulo">Estación-mes</span><b>8.027</b><p>completos, sin días faltantes</p></div>
+    <div class="tarjeta verde cifra"><span class="rotulo">Meses extremos</span><b>913</b><p>11,4 % del total</p></div>
+  </div>
+  <p class="grande" style="font-size:21px">Datos del Servicio Meteorológico Nacional (SMN). <b>Mes extremo:</b> la lluvia supera el <span class="marcado">percentil 90</span> de esa estación para ese mes del calendario. Por construcción pasa 1 de cada 10 veces. ¿Cambia con la fase del ENOS?</p>
+</section>
+
+<!-- 5 -->
+<section class="slide" data-seccion="3 · Frecuencia">
+  <span class="etiqueta">3 · Frecuencia</span>
+  <h2>Con El Niño hay <span class="hl">casi el doble</span> de extremos</h2>
+  <div class="fila dos-uno">
+    <div class="caja-graf"><svg id="g-freq" viewBox="0 0 640 330"></svg></div>
+    <div style="display:grid;gap:12px">
+      <div class="tarjeta naranja cifra"><span class="rotulo">El Niño vs La Niña</span><b class="chica">+7,8 <small>pp</small></b><p>p = 0,001</p></div>
+      <div class="tarjeta naranja cifra"><span class="rotulo">El Niño vs Neutral</span><b class="chica">+5,4 <small>pp</small></b><p>p = 0,016</p></div>
+      <div class="tarjeta gris cifra"><span class="rotulo">La Niña vs Neutral</span><b class="chica" style="color:var(--tenue)">−2,4 <small>pp</small></b><p>p = 0,108 · no significativo</p></div>
+    </div>
+  </div>
+  <p class="nota">Regresión con errores HAC de Newey–West (12 rezagos).</p>
+</section>
+
+<!-- 6 -->
+<section class="slide" data-seccion="3 · Simultaneidad">
+  <span class="etiqueta">3 · Simultaneidad</span>
+  <h2>Y además llueve fuerte <span class="hl">en muchas estaciones a la vez</span></h2>
+  <div class="fila dos-uno">
+    <div class="caja-graf">
+      <div class="leyenda"><span style="--c:#E4E1D9">ninguna</span><span style="--c:#FFD2BC">menos del 25 %</span><span style="--c:#FF9A66">25 a 50 %</span><span style="--c:#C84F17">50 % o más</span></div>
+      <svg id="g-sim" viewBox="0 0 640 270"></svg>
+      <p class="nota" style="margin-top:4px">% de meses de cada fase según la proporción de estaciones en extremo</p>
+    </div>
+    <div style="display:grid;gap:12px">
+      <div class="tarjeta naranja"><h3>Al menos 1 de cada 4 estaciones</h3><p><b>28 %</b> de los meses con El Niño, <b>19 %</b> con Neutral y <b>11 %</b> con La Niña.</p></div>
+      <div class="tarjeta salvia"><h3>Diferencia significativa</h3><p>El Niño vs La Niña: +16,8 pp, p = 0,019 (Holm). Con La Niña nunca hubo un mes con la mitad de las estaciones en extremo.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 7 -->
+<section class="slide" data-seccion="4 · Intensidad">
+  <span class="etiqueta salvia">4 · Intensidad</span>
+  <h2>Más RONI, más extremos, pero <span class="hl">la relación es débil</span></h2>
+  <div class="fila dos-uno">
+    <div class="caja-graf"><svg id="g-sc" viewBox="0 0 680 340"></svg></div>
+    <div style="display:grid;gap:12px">
+      <div class="tarjeta naranja cifra"><span class="rotulo">Correlación</span><b>r = 0,25</b><p>entre RONI y % de estaciones en extremo</p></div>
+      <div class="tarjeta gris cifra"><span class="rotulo">Pendiente</span><b class="chica">+4,1 <small>pp</small></b><p>por cada +1 °C de RONI</p></div>
+      <p style="font-size:16px">Cada punto es un mes. El ENOS empuja, pero la mayor parte de la variación depende de otros factores.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 8 -->
+<section class="slide" data-seccion="4 · Robustez">
+  <span class="etiqueta salvia">4 · Robustez</span>
+  <h2>El Niño queda arriba en <span class="hl">las cuatro estaciones</span></h2>
+  <div class="fila dos-uno">
+    <div class="caja-graf">
+      <div class="leyenda"><span style="--c:var(--nina)">La Niña</span><span style="--c:var(--neu)">Neutral</span><span style="--c:var(--nino)">El Niño</span></div>
+      <svg id="g-est" viewBox="0 0 640 290"></svg>
+    </div>
+    <ul class="lista">
+      <li>En todas las estaciones <b>El Niño</b> tiene la frecuencia más alta. Neutral y La Niña quedan cerca y no difieren significativamente.</li>
+      <li>Es una comparación descriptiva. Que la asociación cambie entre estaciones del año no es significativo (p = 0,86).</li>
+      <li>Por quinquenio la correlación va de 0,13 a 0,40 y siempre es positiva (p = 0,61).</li>
+    </ul>
+  </div>
+</section>
+
+<!-- 9 -->
+<section class="slide" data-seccion="5 · Pregunta aplicada">
+  <span class="etiqueta">5 · Pregunta aplicada</span>
+  <h2>¿Conocer el ENOS ayuda a <span class="hl">anticipar</span> un mes excepcional?</h2>
+  <div class="fila dos">
+    <div>
+      <p style="margin-bottom:10px"><b>Mes excepcional:</b> al menos 25 % de las estaciones en extremo. Usamos la fase ENOS de <span class="marcado">dos meses antes</span>, porque el RONI es un promedio de 3 meses centrado. Probabilidades con 1991–2015, evaluadas en 2016–2025.</p>
+      <div class="caja-graf"><svg id="g-prob" viewBox="0 0 560 220"></svg></div>
+    </div>
+    <div style="display:grid;gap:12px">
+      <div class="tarjeta gris"><span class="rotulo">Brier score · menor es mejor</span><p style="font-size:18px;margin-top:4px">Sin ENOS (climatología): <b>0,1605</b><br>Con fase del ENOS: <b>0,1560</b></p></div>
+      <div class="tarjeta naranja cifra"><span class="rotulo">Mejora</span><b>2,8 %</b><p>mejor en 7 de los 10 años</p></div>
+      <div class="tarjeta salvia"><p>La mejora es chica y <b>desaparece con 3 o 4 meses de anticipación</b>. Sirve más como señal de contexto que como pronóstico.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 10 -->
+<section class="slide" data-seccion="Conclusiones">
+  <span class="etiqueta">Conclusiones</span>
+  <h2>El Niño aumenta la <span class="hl">frecuencia y la extensión</span> de los extremos</h2>
+  <div class="fila dos" style="align-items:stretch">
+    <div style="display:grid;gap:10px">
+      <div class="tarjeta naranja"><h3>Más frecuentes</h3><p>16,4 % de estación-meses con El Niño contra 8,5 % con La Niña. Neutral y La Niña no difieren.</p></div>
+      <div class="tarjeta naranja"><h3>Más extendidos</h3><p>Con El Niño es más común que el extremo alcance a muchas estaciones a la vez.</p></div>
+      <div class="tarjeta salvia"><h3>Sin cambios por época, poder predictivo bajo</h3><p>La asociación no cambia significativamente según la estación del año o el quinquenio, y casi no mejora un pronóstico mensual.</p></div>
+    </div>
+    <div class="tarjeta gris" style="background:#F7F6F2">
+      <h3>Limitaciones</h3>
+      <ul class="lista" style="margin-top:8px">
+        <li style="font-size:16px">Es asociación, no causalidad.</li>
+        <li style="font-size:16px">Solo 20 estaciones y 35 años, con pocos meses de El Niño fuerte.</li>
+        <li style="font-size:16px">Las estaciones no cubren el territorio de forma pareja.</li>
+        <li style="font-size:16px">La mejora de la pregunta aplicada depende del rezago elegido.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 11 -->
+<section class="slide" data-seccion="Cierre">
+  <span class="etiqueta salvia">Cierre</span>
+  <div class="fila dos" style="align-items:center">
+    <div>
+      <h2 style="font-size:44px;margin-bottom:16px">Cómo usamos <span class="hl">la IA</span></h2>
+      <ul class="lista">
+        <li>Generar y depurar el código en Colab (limpieza, P90, gráficos).</li>
+        <li>Revisar que cada gráfico responda una pregunta y verificar los números.</li>
+        <li>Detectar un error de método: el rezago del RONI en la pregunta aplicada.</li>
+        <li>Armar el informe en LaTeX y esta presentación.</li>
+      </ul>
+      <p class="nota" style="margin-top:12px">Validamos cada resultado volviendo a ejecutar el notebook.</p>
+    </div>
+    <div style="text-align:center">
+      <div class="preguntas"><span class="hl">¿Preguntas?</span></div>
+      <p style="font-size:14px;margin-top:22px">github.com/enrique20delgado-create/TP-Labo-ElNino-2C2026</p>
+    </div>
+  </div>
+</section>
+
+</div>
+<footer class="pie">
+  <span id="pie-seccion"></span>
+  <div class="controles"><button id="ant" aria-label="Anterior">←</button><span class="contador" id="contador"></span><button id="sig" aria-label="Siguiente">→</button><button id="pc" aria-label="Pantalla completa" title="Pantalla completa (F)">⛶</button></div>
+</footer>
+
+<script>
+const SC = [[0.57, 5.3], [0.53, 0.0], [0.42, 10.5], [0.42, 21.1], [0.56, 26.3], [0.7, 55.6], [0.86, 11.1], [0.83, 0.0], [1.01, 10.5], [1.2, 0.0], [1.66, 0.0], [1.97, 27.8], [2.12, 0.0], [2.08, 15.8], [1.94, 15.8], [1.76, 15.8], [1.4, 0.0], [0.93, 35.3], [0.52, 0.0], [0.3, 21.1], [0.13, 10.5], [0.1, 22.2], [0.12, 0.0], [0.35, 29.4], [0.55, 0.0], [0.7, 0.0], [0.86, 0.0], [1.06, 11.8], [1.0, 17.6], [0.77, 0.0], [0.45, 0.0], [0.46, 0.0], [0.48, 11.1], [0.46, 35.3], [0.44, 23.5], [0.42, 0.0], [0.33, 0.0], [0.24, 26.3], [0.23, 5.6], [0.32, 0.0], [0.4, 11.1], [0.41, 0.0], [0.53, 5.6], [0.6, 0.0], [0.79, 5.6], [0.97, 0.0], [1.23, 10.5], [1.28, 0.0], [1.17, 11.1], [0.86, 11.1], [0.55, 5.6], [0.2, 0.0], [-0.07, 0.0], [-0.23, 0.0], [-0.41, 0.0], [-0.57, 0.0], [-0.76, 0.0], [-0.93, 0.0], [-1.02, 5.9], [-0.99, 0.0], [-0.87, 5.3], [-0.75, 21.1], [-0.58, 0.0], [-0.37, 10.5], [-0.25, 0.0], [-0.24, 0.0], [-0.2, 0.0], [-0.2, 0.0], [-0.2, 5.6], [-0.25, 27.8], [-0.3, 5.3], [-0.29, 27.8], [-0.21, 0.0], [-0.03, 22.2], [0.17, 0.0], [0.47, 0.0], [0.83, 5.3], [1.2, 10.5], [1.5, 11.1], [1.84, 5.6], [2.07, 5.3], [2.22, 31.6], [2.25, 31.6], [2.28, 33.3], [2.13, 44.4], [1.82, 36.8], [1.22, 47.4], [0.81, 44.4], [0.07, 0.0], [-0.46, 15.8], [-1.05, 16.7], [-1.14, 27.8], [-1.24, 15.8], [-1.33, 0.0], [-1.51, 10.0], [-1.61, 5.3], [-1.56, 5.6], [-1.28, 10.0], [-0.99, 10.0], [-0.88, 10.5], [-0.81, 0.0], [-0.82, 20.0], [-0.83, 16.7], [-0.86, 0.0], [-0.87, 5.0], [-1.06, 0.0], [-1.33, 0.0], [-1.56, 0.0], [-1.5, 0.0], [-1.31, 10.5], [-1.06, 15.8], [-0.88, 40.0], [-0.68, 35.0], [-0.54, 5.3], [-0.35, 0.0], [-0.29, 0.0], [-0.36, 5.0], [-0.55, 31.6], [-0.79, 21.1], [-0.82, 11.1], [-0.79, 36.8], [-0.62, 15.0], [-0.55, 10.0], [-0.41, 0.0], [-0.28, 0.0], [-0.08, 31.6], [0.01, 0.0], [-0.02, 47.4], [-0.05, 20.0], [-0.18, 21.1], [-0.27, 5.0], [-0.32, 0.0], [-0.16, 21.1], [0.01, 5.3], [0.03, 45.0], [0.05, 30.0], [0.22, 10.0], [0.44, 0.0], [0.64, 45.0], [0.8, 15.0], [0.97, 15.0], [1.18, 30.0], [1.33, 45.0], [1.13, 20.0], [0.85, 5.0], [0.47, 21.1], [0.23, 10.0], [-0.19, 25.0], [-0.34, 5.0], [-0.24, 5.0], [0.04, 15.0], [0.09, 0.0], [0.17, 0.0], [0.17, 5.0], [0.25, 0.0], [0.22, 15.8], [0.23, 0.0], [0.12, 0.0], [0.07, 0.0], [0.09, 15.0], [0.18, 0.0], [0.36, 0.0], [0.54, 5.0], [0.69, 0.0], [0.71, 15.8], [0.7, 0.0], [0.7, 5.0], [0.69, 5.0], [0.54, 0.0], [0.4, 0.0], [0.26, 21.1], [0.25, 5.3], [0.2, 15.0], [0.05, 35.0], [-0.06, 0.0], [-0.11, 0.0], [-0.04, 5.0], [-0.18, 0.0], [-0.5, 5.0], [-0.81, 0.0], [-0.9, 5.0], [-0.87, 0.0], [-0.69, 0.0], [-0.49, 0.0], [-0.19, 0.0], [-0.05, 55.0], [0.15, 0.0], [0.36, 5.0], [0.57, 0.0], [0.73, 15.8], [0.91, 5.0], [0.89, 25.0], [0.6, 10.5], [0.16, 15.8], [-0.15, 38.9], [-0.33, 5.0], [-0.36, 10.0], [-0.44, 0.0], [-0.5, 0.0], [-0.79, 0.0], [-1.04, 30.0], [-1.33, 21.1], [-1.49, 5.0], [-1.65, 0.0], [-1.73, 10.5], [-1.62, 0.0], [-1.39, 0.0], [-1.04, 5.0], [-0.8, 0.0], [-0.46, 0.0], [-0.24, 5.3], [-0.17, 0.0], [-0.26, 5.0], [-0.38, 10.0], [-0.6, 5.0], [-0.86, 0.0], [-0.96, 0.0], [-0.92, 5.3], [-0.7, 16.7], [-0.43, 0.0], [-0.05, 10.0], [0.24, 0.0], [0.35, 35.0], [0.42, 10.0], [0.53, 50.0], [0.86, 5.0], [1.29, 60.0], [1.5, 15.0], [1.44, 10.5], [1.11, 25.0], [0.69, 5.0], [0.1, 0.0], [-0.5, 10.0], [-0.97, 0.0], [-1.21, 35.0], [-1.39, 0.0], [-1.54, 5.0], [-1.61, 0.0], [-1.63, 0.0], [-1.55, 15.0], [-1.42, 10.0], [-1.21, 10.0], [-0.97, 0.0], [-0.76, 0.0], [-0.52, 10.0], [-0.29, 5.0], [-0.29, 25.0], [-0.41, 0.0], [-0.7, 5.0], [-0.91, 0.0], [-1.02, 5.0], [-0.96, 0.0], [-0.77, 0.0], [-0.6, 15.0], [-0.5, 0.0], [-0.42, 0.0], [-0.26, 0.0], [0.01, 0.0], [0.33, 0.0], [0.43, 60.0], [0.37, 5.0], [0.21, 50.0], [-0.03, 0.0], [-0.27, 30.0], [-0.55, 0.0], [-0.57, 5.0], [-0.49, 20.0], [-0.44, 5.0], [-0.48, 0.0], [-0.48, 15.0], [-0.48, 5.0], [-0.38, 0.0], [-0.38, 0.0], [-0.22, 10.0], [-0.23, 20.0], [-0.27, 0.0], [-0.43, 15.0], [-0.38, 25.0], [-0.15, 25.0], [0.11, 10.0], [0.15, 5.0], [0.0, 25.0], [-0.14, 50.0], [-0.09, 0.0], [0.06, 30.0], [0.35, 0.0], [0.54, 10.0], [0.62, 20.0], [0.54, 30.0], [0.47, 10.0], [0.59, 0.0], [0.72, 5.0], [0.89, 20.0], [1.02, 30.0], [1.27, 25.0], [1.54, 55.0], [1.8, 0.0], [2.03, 5.0], [2.18, 20.0], [2.25, 45.0], [2.14, 0.0], [1.81, 40.0], [1.3, 5.0], [0.65, 40.0], [0.08, 0.0], [-0.43, 20.0], [-0.7, 0.0], [-0.81, 15.0], [-0.88, 0.0], [-0.96, 30.0], [-0.96, 0.0], [-0.89, 10.0], [-0.6, 10.0], [-0.44, 25.0], [-0.18, 0.0], [-0.1, 30.0], [-0.02, 50.0], [-0.04, 0.0], [-0.23, 10.0], [-0.46, 45.0], [-0.62, 45.0], [-0.82, 15.0], [-0.97, 5.0], [-1.14, 0.0], [-1.08, 35.0], [-1.04, 0.0], [-0.9, 15.8], [-0.69, 15.8], [-0.33, 52.6], [-0.02, 0.0], [0.08, 5.3], [0.16, 0.0], [0.35, 5.3], [0.62, 5.6], [0.82, 38.9], [0.78, 5.6], [0.68, 66.7], [0.64, 0.0], [0.57, 10.5], [0.53, 15.8], [0.37, 36.8], [0.24, 5.3], [0.04, 36.8], [-0.12, 5.3], [-0.01, 0.0], [0.15, 0.0], [0.29, 5.3], [0.22, 5.3], [0.14, 15.8], [0.1, 5.3], [0.02, 0.0], [-0.25, 0.0], [-0.55, 0.0], [-0.72, 5.6], [-0.76, 0.0], [-0.85, 0.0], [-1.16, 0.0], [-1.37, 0.0], [-1.46, 0.0], [-1.39, 5.6], [-1.32, 31.6], [-1.18, 0.0], [-1.08, 5.3], [-0.89, 0.0], [-0.68, 0.0], [-0.57, 11.8], [-0.6, 0.0], [-0.76, 0.0], [-0.95, 0.0], [-1.08, 0.0], [-1.24, 10.5], [-1.22, 0.0], [-1.18, 0.0], [-1.13, 0.0], [-1.19, 29.4], [-1.26, 16.7], [-1.17, 0.0], [-0.95, 0.0], [-0.86, 0.0], [-0.94, 16.7], [-1.07, 0.0], [-1.1, 5.6], [-1.05, 0.0], [-0.99, 0.0], [-0.86, 0.0], [-0.68, 0.0], [-0.55, 0.0], [-0.31, 0.0], [-0.04, 23.5], [0.28, 0.0], [0.54, 5.6], [0.79, 5.6], [1.04, 44.4], [1.3, 11.1], [1.42, 17.6], [1.4, 27.8], [1.13, 11.1], [0.78, 0.0], [0.42, 33.3], [0.04, 16.7], [-0.28, 5.6], [-0.45, 0.0], [-0.49, 0.0], [-0.56, 27.8], [-0.67, 0.0], [-0.76, 5.6], [-0.88, 22.2], [-1.05, 0.0], [-1.1, 0.0], [-0.85, 16.7], [-0.66, 0.0], [-0.5, 0.0], [-0.48, 44.4], [-0.36, 11.1], [-0.41, 27.8], [-0.59, 33.3], [-0.78, 38.9], [-0.93, 11.1], [-0.98, 0.0], [-1.04, 22.2]];
+const C={nino:'#FF7A3D',neu:'#A29E94',nina:'#2F7D5B',ink:'#1A1A1A',tit:'#171C2E',ten:'#57544E',grid:'rgba(26,26,26,.12)'};
+const NS='http://www.w3.org/2000/svg';
+function el(p,t,a,txt){const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);if(txt!=null)e.textContent=txt;p.appendChild(e);return e}
+const fmt=v=>String(v).replace('.',',');
+
+// portada: 420 meses, un punto por mes, coloreado por fase
+(function(){const s=document.getElementById('g-portada');const n=20;
+SC.forEach((p,i)=>{const r=Math.floor(i/n),c=i%n;const col=p[0]>=.5?C.nino:p[0]<=-.5?C.nina:'#D6D2C8';
+el(s,'circle',{cx:12+c*20.8,cy:12+r*19.4,r:7.2,fill:col,stroke:C.ink,'stroke-width':p[1]>=25?1.6:0})});
+el(s,'text',{x:210,y:440,'text-anchor':'middle','font-size':12.5,'font-style':'italic'},'Cada punto es un mes · con borde: mes excepcional')})();
+
+// frecuencia
+(function(){const s=document.getElementById('g-freq');const d=[['La Niña',8.47,C.nina],['Neutral',10.88,C.neu],['El Niño',16.44,C.nino]];
+const x0=56,y0=290,h=250,max=20;
+for(let v=0;v<=20;v+=5){const y=y0-v/max*h;el(s,'line',{x1:x0,x2:625,y1:y,y2:y,stroke:C.grid});el(s,'text',{x:x0-10,y:y+5,'text-anchor':'end'},v+' %')}
+d.forEach((r,i)=>{const x=x0+40+i*180,w=120,y=y0-r[1]/max*h;el(s,'rect',{x,y,width:w,height:y0-y,fill:r[2],stroke:C.ink,'stroke-width':1.5,rx:4});
+el(s,'text',{x:x+w/2,y:y-12,'text-anchor':'middle','font-size':26,'font-weight':800,'font-family':"'Noto Serif Display',Georgia,serif",'font-stretch':'75%',fill:C.tit},fmt(r[1].toFixed(1))+' %');
+el(s,'text',{x:x+w/2,y:y0+24,'text-anchor':'middle','font-size':15,'font-weight':600,fill:C.ink},r[0])});
+const gy=y0-11.37/max*h;el(s,'line',{x1:x0,x2:625,y1:gy,y2:gy,stroke:C.ink,'stroke-dasharray':'6 5','stroke-width':1.3});
+el(s,'text',{x:x0-46,y:16,'font-size':12.5},'% de estación-meses por encima del P90 · línea punteada: promedio 11,4 %')})();
+
+// simultaneidad
+(function(){const s=document.getElementById('g-sim');const cols=['#E4E1D9','#FFD2BC','#FF9A66','#C84F17'],tc=[C.ten,C.ink,C.ink,'#fff'];
+const d=[['El Niño',[22.3,49.5,23.3,4.9]],['Neutral',[41.7,39.9,14.9,3.6]],['La Niña',[48.3,40.3,11.4,0]]];const x0=90,W=540;
+d.forEach((r,j)=>{const y=10+j*88;let x=x0;el(s,'text',{x:x0-12,y:y+38,'text-anchor':'end','font-size':15,'font-weight':600,fill:C.ink},r[0]);
+r[1].forEach((v,i)=>{const w=v/100*W;if(w>0){el(s,'rect',{x,y,width:w,height:62,fill:cols[i],stroke:C.ink,'stroke-width':1.3});
+if(v>=4.5)el(s,'text',{x:x+w/2,y:y+37,'text-anchor':'middle','font-size':v<8?12:15,'font-weight':600,fill:tc[i]},v<8?fmt(v.toFixed(0)):fmt(v.toFixed(1))+' %')}x+=w})})})();
+
+// dispersión
+(function(){const s=document.getElementById('g-sc');const x0=52,x1=670,y0=300,y1=14;
+const sx=v=>x0+(v+2)/4.5*(x1-x0),sy=v=>y0-v/70*(y0-y1);
+el(s,'rect',{x:x0,y:y1,width:sx(-.5)-x0,height:y0-y1,fill:C.nina,opacity:.07});
+el(s,'rect',{x:sx(.5),y:y1,width:x1-sx(.5),height:y0-y1,fill:C.nino,opacity:.09});
+for(let v=0;v<=70;v+=10){el(s,'line',{x1:x0,x2:x1,y1:sy(v),y2:sy(v),stroke:C.grid});el(s,'text',{x:x0-8,y:sy(v)+4,'text-anchor':'end'},v+' %')}
+for(let v=-2;v<=2.5;v+=.5)el(s,'text',{x:sx(v),y:y0+19,'text-anchor':'middle'},fmt(v));
+SC.forEach(p=>{const c=p[0]>=.5?C.nino:p[0]<=-.5?C.nina:C.neu;el(s,'circle',{cx:sx(p[0]),cy:sy(p[1]),r:4.4,fill:c,'fill-opacity':.75,stroke:C.ink,'stroke-width':.6})});
+const n=SC.length,mx=SC.reduce((a,p)=>a+p[0],0)/n,my=SC.reduce((a,p)=>a+p[1],0)/n;let a1=0,a2=0;SC.forEach(p=>{a1+=(p[0]-mx)*(p[1]-my);a2+=(p[0]-mx)**2});const b=a1/a2,a=my-b*mx;
+el(s,'line',{x1:sx(-2),y1:sy(a-2*b),x2:sx(2.4),y2:sy(a+2.4*b),stroke:C.ink,'stroke-width':2.6});
+el(s,'text',{x:(x0+x1)/2,y:y0+38,'text-anchor':'middle','font-size':13.5},'RONI del mes (°C)');
+el(s,'text',{x:sx(-1.25),y:y1+20,'text-anchor':'middle','font-size':14,'font-weight':700,fill:C.nina},'La Niña');
+el(s,'text',{x:sx(1.5),y:y1+20,'text-anchor':'middle','font-size':14,'font-weight':700,fill:'#C84F17'},'El Niño')})();
+
+// estaciones del año
+(function(){const s=document.getElementById('g-est');const d=[['Verano',[7.20,10.87,17.41]],['Otoño',[8.99,11.62,14.55]],['Invierno',[10.07,10.38,16.44]],['Primavera',[8.35,10.52,16.64]]];
+const cs=[C.nina,C.neu,C.nino];const x0=48,y0=255,h=235,max=20;
+for(let v=0;v<=20;v+=5){const y=y0-v/max*h;el(s,'line',{x1:x0,x2:630,y1:y,y2:y,stroke:C.grid});el(s,'text',{x:x0-8,y:y+4,'text-anchor':'end'},v+' %')}
+d.forEach((g,j)=>{const gx=x0+18+j*146;g[1].forEach((v,i)=>{const x=gx+i*38,y=y0-v/max*h;el(s,'rect',{x,y,width:34,height:y0-y,fill:cs[i],stroke:C.ink,'stroke-width':1.2,rx:2});
+el(s,'text',{x:x+17,y:y-6,'text-anchor':'middle','font-size':11.5,'font-weight':600},fmt(v.toFixed(1)))});
+el(s,'text',{x:gx+55,y:y0+22,'text-anchor':'middle','font-size':14.5,'font-weight':600,fill:C.ink},g[0])})})();
+
+// probabilidades
+(function(){const s=document.getElementById('g-prob');const d=[['La Niña',9.8,C.nina],['Neutral',17.9,C.neu],['El Niño',25.6,C.nino]];
+const x0=88,W=400,clim=17.8;el(s,'text',{x:0,y:15,'font-size':13},'Probabilidad de mes excepcional según la fase (1991–2015)');
+d.forEach((r,i)=>{const y=34+i*54,w=r[1]/30*W;el(s,'text',{x:x0-10,y:y+24,'text-anchor':'end','font-size':14.5,'font-weight':600,fill:C.ink},r[0]);
+el(s,'rect',{x:x0,y,width:w,height:36,fill:r[2],stroke:C.ink,'stroke-width':1.3,rx:3});el(s,'text',{x:x0+w+8,y:y+24,'font-size':16,'font-weight':700,fill:C.tit},fmt(r[1].toFixed(1))+' %')});
+const cx=x0+clim/30*W;el(s,'line',{x1:cx,x2:cx,y1:26,y2:196,stroke:C.ink,'stroke-dasharray':'5 4','stroke-width':1.4});
+el(s,'text',{x:cx,y:214,'text-anchor':'middle','font-size':12.5},'sin ENOS: 17,8 %')})();
+
+// puntitos de fondo
+(function(){const c=document.getElementById('puntitos');const cols=['rgba(255,122,61,.35)','rgba(169,205,177,.6)','rgba(255,122,61,.25)'];
+for(let i=0;i<26;i++){const e=document.createElement('i');const z=4+Math.random()*7;e.style.cssText=`left:${Math.random()*100}%;top:${Math.random()*100}%;width:${z}px;height:${z}px;background:${cols[i%3]};--dx:${(Math.random()*60-30).toFixed(0)}px;--dy:${(Math.random()*60-30).toFixed(0)}px;animation-delay:-${(Math.random()*20).toFixed(1)}s`;c.appendChild(e)}})();
+
+// navegación
+const slides=[...document.querySelectorAll('.slide')];let cur=0;
+function fit(){const k=Math.min(innerWidth/1280,innerHeight/720);slides.forEach(s=>s.style.transform='scale('+k+')')}
+function show(i){cur=Math.max(0,Math.min(slides.length-1,i));slides.forEach((s,j)=>s.classList.toggle('activa',j===cur));
+document.getElementById('contador').textContent=(cur+1)+' / '+slides.length;document.getElementById('barra').style.width=((cur+1)/slides.length*100)+'%';
+document.getElementById('pie-seccion').textContent=slides[cur].dataset.seccion||'';history.replaceState(null,'','#'+(cur+1))}
+function pc(){document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen()}
+addEventListener('keydown',e=>{if(['ArrowRight','PageDown',' ','Enter'].includes(e.key)){e.preventDefault();show(cur+1)}else if(['ArrowLeft','PageUp','Backspace'].includes(e.key)){e.preventDefault();show(cur-1)}else if(e.key==='Home')show(0);else if(e.key==='End')show(slides.length-1);else if(e.key==='f'||e.key==='F')pc()});
+document.getElementById('sig').onclick=()=>show(cur+1);document.getElementById('ant').onclick=()=>show(cur-1);document.getElementById('pc').onclick=pc;
+let tx=null;addEventListener('touchstart',e=>tx=e.touches[0].clientX);addEventListener('touchend',e=>{if(tx==null)return;const d=e.changedTouches[0].clientX-tx;if(Math.abs(d)>50)show(cur+(d<0?1:-1));tx=null});
+addEventListener('resize',fit);fit();show((parseInt(location.hash.slice(1))||1)-1);
+</script>
+</body>
+</html>
