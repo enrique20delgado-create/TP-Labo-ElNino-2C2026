@@ -20,7 +20,7 @@ El trabajo estudia la asociación entre las fases de El Niño–Oscilación del 
 |---|---|
 | 1. Análisis en Python (Colab) | [`Notebook/Ds_Enso.ipynb`](Notebook/Ds_Enso.ipynb) (ejecutado) |
 | 2. Informe académico (LaTeX) | [`informe/informe_enso_litoral.pdf`](informe/informe_enso_litoral.pdf) · [Proyecto en Overleaf](https://www.overleaf.com/project/6ae93083856526b7c6483d93/share#c4e52e0b6e3651fc3ee54d3b1bd0317de332fbd7173a5312) |
-| 3. Presentación | [`presentacion/presentacion_enso.html`](presentacion/presentacion_enso.html) · [Ver en línea](https://enrique20delgado-create.github.io/TP-Labo-ElNino-2C2026/presentacion/presentacion_enso.html) |
+| 3. Presentación | [`presentacion/presentacion_enso.html`](presentacion/presentacion_enso.html) · [Ver en línea](https://enrique20delgado-create.github.io/TP-Labo-ElNino-2C2026/Presentacion/presentacion_enso.html) |
 
 ## Preguntas de investigación
 
